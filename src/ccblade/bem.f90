@@ -188,7 +188,6 @@ subroutine defineCurvature(n, r, precurve, presweep, precone, x_az, y_az, z_az, 
     z_az = r*cos(precone) + precurve*sin(precone)
     y_az = presweep
 
-
     ! compute total coning angle for purposes of relative velocity
     cone(1) = atan2(-(x_az(2) - x_az(1)), z_az(2) - z_az(1))
     cone(2:n-1) = 0.5_dp*(atan2(-(x_az(2:n-1) - x_az(1:n-2)), z_az(2:n-1) - z_az(1:n-2)) &
@@ -202,7 +201,6 @@ subroutine defineCurvature(n, r, precurve, presweep, precone, x_az, y_az, z_az, 
         s(i) = s(i-1) + sqrt((precurve(i) - precurve(i-1))**2 + &
             (presweep(i) - presweep(i-1))**2 + (r(i) - r(i-1))**2)
     end do
-
 
 end subroutine defineCurvature
 
@@ -218,8 +216,8 @@ subroutine windComponents(n, r, precurve, presweep, precone, yaw, tilt, azimuth,
 
     ! in
     integer, intent(in) :: n
-    real(dp), dimension(n), intent(in) :: r, precurve, presweep
-    real(dp), intent(in) :: precone, yaw, tilt, azimuth, Uinf, OmegaRPM, hubHt, shearExp
+    real(dp), dimension(n), intent(in) :: r, precurve, presweep, Uinf
+    real(dp), intent(in) :: precone, yaw, tilt, azimuth, OmegaRPM, hubHt, shearExp
 
     ! out
     real(dp), dimension(n), intent(out) :: Vx, Vy
@@ -253,9 +251,7 @@ subroutine windComponents(n, r, precurve, presweep, precone, yaw, tilt, azimuth,
 
 
     ! velocity with shear
-
     V = Uinf*(1 + heightFromHub/hubHt)**shearExp
-
 
     ! transform wind to blade c.s.
     ! Vwind = DirectionVector(V, 0*V, 0*V).windToYaw(yaw).yawToHub(tilt).hubToAzimuth(azimuth).azimuthToBlade(cone)
@@ -276,8 +272,6 @@ subroutine windComponents(n, r, precurve, presweep, precone, yaw, tilt, azimuth,
     ! total velocity
     Vx = Vwind_x + Vrot_x
     Vy = Vwind_y + Vrot_y
-
-
 
 end subroutine windComponents
 
@@ -339,7 +333,7 @@ subroutine thrustTorque(n, Np, Tp, r, precurve, presweep, precone, &
     thrust      = Npfull*cos(cone)
     torque      = Tpfull*z_az
     flap_moment = Npfull*z_az
-    
+
     T = 0.0_dp
     do i = 1, n+1
         ds = s(i+1) - s(i)
@@ -1309,4 +1303,3 @@ SUBROUTINE DEFINECURVATURE_DV2(n, r, rd, precurve, precurved, presweep, &
     s(i) = s(i-1) + result1
   END DO
 END SUBROUTINE DEFINECURVATURE_DV2
-
