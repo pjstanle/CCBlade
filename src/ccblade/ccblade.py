@@ -740,6 +740,8 @@ class CCBlade(object):
             derivatives of tangential loads.  Same keys as dNp.
         """
 
+        import time
+
         self.pitch = radians(pitch)
         azimuth = radians(azimuth)
 
@@ -769,7 +771,6 @@ class CCBlade(object):
 
         # ---------------- loop across blade ------------------
         for i in range(n):
-
             # index dependent arguments
             if self.inverse_analysis == True:
                 args = (self.r[i], self.chord[i], self.cl[i], self.cd[i], self.af[i], Vx[i], Vy[i])
@@ -781,7 +782,6 @@ class CCBlade(object):
                 phi_star = pi/2.0
 
             else:
-
                 # ------ BEM solution method see (Ning, doi:10.1002/we.1636) ------
 
                 # set standard limits
@@ -797,7 +797,6 @@ class CCBlade(object):
                     else:
                         phi_lower = pi/2
                         phi_upper = pi - epsilon
-
                 try:
                     phi_star = brentq(errf, phi_lower, phi_upper, args=args)
 
@@ -812,6 +811,7 @@ class CCBlade(object):
                 self.theta[i]   = phi_star - self.alpha[i] - self.pitch # rad
                 args = (self.r[i], self.chord[i], self.theta[i], self.af[i], Vx[i], Vy[i])
 
+
             # derivatives of residual
 
             a[i], ap[i], Np[i], Tp[i], dNp_dx, dTp_dx, dR_dx = self.__loads(phi_star, rotating, *args)
@@ -822,6 +822,7 @@ class CCBlade(object):
                 Np[i] = 0.
                 Tp[i] = 0.
                 # print('warning, BEM convergence error, setting Np[%d] = Tp[%d] = 0.' % (i,i))
+
 
             if self.derivatives:
                 # separate state vars from design vars
@@ -848,7 +849,6 @@ class CCBlade(object):
 
                 dNp_dVy[i] = DNp_Dx[3]
                 dTp_dVy[i] = DTp_Dx[3]
-
 
 
         if not self.derivatives:
